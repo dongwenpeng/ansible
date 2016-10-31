@@ -4,5 +4,5 @@
   sudo: yes
   sudo_user: admin
   tasks:
-    - name: add zabbix 
+    - name: u'add zabbix'
       
