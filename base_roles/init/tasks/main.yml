@@ -1,0 +1,81 @@
+---
+- name: u'iptables_disable.sh'
+  script: iptables_disable.sh
+  tags: env
+  ignore_errors: yes
+
+- name: u'env_init.sh'
+  script: env_init.sh
+  ignore_errors: yes
+
+- name: u'copy sysctl.conf'
+  copy: src=sysctl.conf dest=/etc/sysctl.conf owner=root group=root mode=0644
+
+- name: u'sysctl -p'
+  command: sysctl -e -p
+  ignore_errors: yes
+
+- name: u'SSH disabled GSSAPIAuthentication'
+  command: sed -i 's/GSSAPIAuthentication yes/GSSAPIAuthentication no/g' /etc/ssh/sshd_config
+
+- name: u'SSH disabled UseDNS'
+  command: echo "UseDNS no" >> /etc/ssh/sshd_config
+
+- name: u'add group admin'
+  group: name=admin gid=601 state=present
+
+- name: u'add group log'
+  group: name=log gid=602 state=present
+
+- name: u'add user admin'
+  user: name=admin comment="defaults sudo user" uid=601 groups=admin password="123456"
+
+- name: u'add user log'
+  user: name=log comment="defaults sudo user" uid=602 groups=log password="123456"
+
+- name: u'create directory'
+  script: directory.sh
+  ignore_errors: yes
+
+- name: u"install system base packages"
+  yum: name={{ item }} state=present
+  with_items:
+     - sysstat
+     - pciutils
+     - net-tools
+     - nload
+     - perf
+     - iotop
+     - iftop
+     - strace
+     - wget
+     - vim
+     - lrzsz
+     - dstat
+     - htop
+     - telnet
+     - traceroute
+     - mtr
+     - tree
+     - git
+     - curl
+     - lsof
+     - nmap
+     - sudo
+     - ntpdate
+     - rsync
+     - unzip
+     - bzip2
+     - gzip
+     - xz
+     - cmake
+     - autoconf
+     - automake
+     - pcre
+     - pcre-devel
+     - zlib
+     - zlib-devel
+  ignore_errors: yes
+
+- name: u'time sync'
+  cron: name="time sync" minute=*/3 hour=* day=* month=* weekday=* user=root job="/usr/sbin/ntpdate 10.0.8.100"

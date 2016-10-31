@@ -1,0 +1,6 @@
+---
+- hosts: all
+  roles:
+     - { role: repo , tags: "repo"}
+     - { role: init , tags: "init"}
+     - { role: zabbix , tags: "zabbix"}

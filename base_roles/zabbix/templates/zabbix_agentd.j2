@@ -1,0 +1,12 @@
+PidFile=/tmp/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=10
+EnableRemoteCommands=0
+LogRemoteCommands=0
+Include=/etc/zabbix/zabbix_agentd.d
+UnsafeUserParameters=1
+StartAgents=5
+ListenPort=10050
+Server={{ zbx_master }}
+ServerActive={{ zbx_master }}:{{ zbx_master_port }}
+Hostname={{ zbx_host }}

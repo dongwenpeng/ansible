@@ -1,0 +1,88 @@
+- name: u'yum install selinux-python'
+  yum: name=libselinux-python state=present
+  ignore_errors: yes
+
+- name: u'yum install sysstat'
+  yum: name=sysstat state=present
+
+- name: u'disabled selinux'
+  shell: setenforce 0
+  when: ansible_selinux.status  == "enforcing"
+  ignore_errors: yes
+
+- name: u'disabled selinux'
+  shell: sed -i s/SELINUX=enforcng/SELINUX=disabled/g /etc/sysconfig/selinux
+  ignore_errors: yes
+
+- name: u'copy zabbix repo'
+  copy: src=zabbix-release-3.0-1.el6.noarch.rpm dest=/tmp/zabbix-release-3.0-1.el6.noarch.rpm mode=0655
+
+- name: u'copy zabbix repo'
+  copy: src=zabbix-release-3.0-1.el5.noarch.rpm dest=/tmp/zabbix-release-3.0-1.el5.noarch.rpm mode=0655
+  when: ansible_distribution_major_version == "5"
+
+- name: u'CentOS 6/7 add zabbix repo'
+  yum: name=/tmp/zabbix-release-3.0-1.el6.noarch.rpm state=present
+  ignore_errors: yes
+
+- name: u'CentOS 5 add zabbix repo'
+  yum: name=/tmp/zabbix-release-3.0-1.el5.noarch.rpm state=present
+  when: ansible_distribution_major_version == "5"
+  ignore_errors: yes
+
+- name: u'yum install zabbix-agent'
+  yum: name=zabbix-agent-3.0.4 state=present
+  when: ansible_os_family  == "RedHat"
+
+- name: u'configuration zabbix-agent'
+  template: src="zabbix_agentd.j2" dest="/etc/zabbix/zabbix_agentd.conf" owner=root group=root mode=0644
+  notify:
+  - restart zabbix
+
+- name: u'create /data/scripts directory'
+  file: path=/data/scripts state=directory
+
+- name: u'copy bash.sh'
+  copy: src=bash.sh dest=/data/scripts/bash.sh mode=0655
+  tags:
+  - copyfile
+
+- name: u'execute bash.sh'
+  shell: bash /data/scripts/bash.sh
+  tags:
+  - shell
+
+- name: u'create /var/run/zabbix directory'
+  file: path=/var/run/zabbix state=directory owner=zabbix group=zabbix mode=0755
+
+- name: u'start zabbix-agentd'
+  service: name=zabbix-agent state=started enabled=yes
+
+- name: u'install rsync'
+  yum: name=rsync state=present
+
+- name: u'copy rsync_zbx.sh script'
+  template: src=rsync_zbx.sh dest=/data/scripts/rsync_zbx.sh owner=root group=root mode=0655
+
+- name: u'sync remote zabbix configuration file'
+  shell: bash /data/scripts/rsync_zbx.sh
+  tags:
+  - synczabbxi
+  notify:
+  - restart zabbix
+
+- name: u'add crontab'
+  cron: name="sync zabbix file" minute=1 hour=*/1 day=* month=* weekday=* user=root job="/data/scripts/rsync_zbx.sh"
+  tags:
+  - crontab
+
+- name: u'yum install python-argparse'
+  yum: name=python-argparse state=present
+  when: ansible_os_family  == "RedHat"
+
+- name: u'copy zabbix_api.py script'
+  template: src=zabbix_api.py dest=/data/scripts/zabbix_api.py owner=root group=root mode=0655
+
+- name: u'register to zabbix server'
+  shell: python /data/scripts/zabbix_api.py -C "{{ ip }}" "{{ hostgroup }}" "{{ template }}"
+  ignore_errors: yes

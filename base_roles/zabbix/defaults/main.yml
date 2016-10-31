@@ -1,0 +1,11 @@
+---
+# Zabbix Agent Variabels Settings
+zbx_host: "{{ ansible_hostname }}"
+#zbx_master: "10.0.8.134"
+zbx_master: "10.99.73.7"
+zbx_master_port: "10051"
+zbx_agentd: "/etc/zabbix/zabbix_agentd.d"
+
+# Zabbix Server Variabels Settings
+hostgroup: "test"
+template: "Template Linux System Base"
