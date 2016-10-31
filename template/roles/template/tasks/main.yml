@@ -2,7 +2,7 @@
 - hosts: all 
   remote_user: root
   sudo: yes
-  sudo_user: cloud
+  sudo_user: admin
   tasks:
     - name: add zabbix 
       
