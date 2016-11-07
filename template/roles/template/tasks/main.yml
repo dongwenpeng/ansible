@@ -2,7 +2,7 @@
 - hosts: all 
   remote_user: root
   sudo: yes
-  sudo_user: admin
+  sudo_user: ansible
   tasks:
-    - name: u'add zabbix'
+    - name: add zabbix 
       

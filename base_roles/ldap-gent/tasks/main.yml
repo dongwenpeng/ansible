@@ -1,0 +1,30 @@
+---
+- name: u'yum install selinux-python'
+  yum: name=libselinux-python state=present
+
+- name: u'create /data/scripts directory'
+  file: path=/data/scripts state=directory
+
+- name: u'add ldap-agent for CentOS 5'
+  copy: src=ldap5.sh dest=/data/scripts/ldap5.sh owner=root group=root mode=0755
+  when: ansible_distribution_major_version == "5"
+
+- name: u'add ldap-agent for CentOS 6'
+  copy: src=ldap6.sh dest=/data/scripts/ldap6.sh owner=root group=root mode=0755
+  when: ansible_distribution_major_version == "6"
+
+- name: u'add ldap-agent for CentOS 7'
+  copy: src=ldap7.sh dest=/data/scripts/ldap7.sh owner=root group=root mode=0755
+  when: ansible_distribution_major_version == "7"
+
+- name: u'execute ldap5.sh'
+  shell: bash /data/scripts/ldap5.sh
+  when: ansible_distribution_major_version == "5"
+
+- name: u'execute ldap6.sh'
+  shell: bash /data/scripts/ldap6.sh
+  when: ansible_distribution_major_version == "6"
+
+- name: u'execute ldap7.sh'
+  shell: bash /data/scripts/ldap7.sh
+  when: ansible_distribution_major_version == "7"

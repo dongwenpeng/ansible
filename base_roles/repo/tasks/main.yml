@@ -1,3 +1,4 @@
+---
 - name: u'yum install selinux-python'
   yum: name=libselinux-python state=present
 

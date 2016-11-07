@@ -28,10 +28,10 @@
   group: name=log gid=602 state=present
 
 - name: u'add user admin'
-  user: name=admin comment="defaults sudo user" uid=601 groups=admin password="123456"
+  user: name=admin comment="defaults sudo user" uid=601 groups=admin password="eju@admin"
 
 - name: u'add user log'
-  user: name=log comment="defaults sudo user" uid=602 groups=log password="123456"
+  user: name=log comment="defaults sudo user" uid=602 groups=log password="eju@admin"
 
 - name: u'create directory'
   script: directory.sh
