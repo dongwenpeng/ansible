@@ -17,7 +17,7 @@ class zabbix_api:
 	                       "method": "user.login", 
 	                       "params": { 
 	                                  "user": "Admin",            #修改用户名
-	                                  "password": "eju@zabbix!@#" #修改密码
+	                                  "password": "123456"        #修改密码
 	                                  }, 
 	                       "id": 0 
 	                       }) 
